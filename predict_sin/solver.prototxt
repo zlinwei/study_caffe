@@ -1,0 +1,7 @@
+net: "train_test.prototxt"
+base_lr: 0.001
+snapshot_prefix: "./snapshot_prefix/"
+solver_type: RMSPROP
+display: 1000
+# The maximum number of iterations
+max_iter: 40000

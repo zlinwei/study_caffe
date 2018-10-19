@@ -1,0 +1,52 @@
+name: "IP_NET"
+layers {
+  name: "input_layer"
+  type: MEMORY_DATA
+  top: "data"
+  top: "label"
+  memory_data_param {
+    batch_size: 128
+    channels: 1
+    height: 1
+    width: 100
+  }
+}
+
+layers {
+  name: "ip1_layer"
+  type: INNER_PRODUCT
+  bottom: "data"
+  top: "hidden_w"
+  inner_product_param {
+    num_output: 1000
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+  }
+}
+
+
+layers {
+  name: "ip2_layer"
+  type: INNER_PRODUCT
+  bottom: "hidden_w"
+  top: "next_value"
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+  }
+}
+
+
+
+layers {
+  name: "loss"
+  type: EUCLIDEAN_LOSS
+  bottom: "next_value"
+  bottom: "label"
+  top: "loss"
+}
