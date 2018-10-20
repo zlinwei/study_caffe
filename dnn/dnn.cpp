@@ -26,5 +26,7 @@ int main(int argc, char *argv[]) {
 
     net->TestNet();
 
+    net->Snapshot();
+
     return 0;
 }

@@ -67,7 +67,6 @@ void DenseNet::TrainNet() {
 
     _current_iter++;
 
-
     _solver->Step(100);
 }
 
@@ -97,4 +96,8 @@ void DenseNet::TestNet() {
         outfile << _data->data_at(k, 0, 0, 0) << " " << output[k] << " " << _next_value->data_at(k, 0, 0, 0) << "\n";
     }
     outfile.close();
+}
+
+void DenseNet::Snapshot() {
+    _solver->Snapshot();
 }

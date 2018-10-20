@@ -1,6 +1,6 @@
 net: "train_test.prototxt"
 base_lr: 0.01
 lr_policy: "fixed"
-snapshot_prefix: "./snapshot_prefix/"
+snapshot_prefix: "."
 type: "RMSProp"
 max_iter: 5000

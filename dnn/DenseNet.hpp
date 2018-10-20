@@ -43,6 +43,8 @@ public:
 
     void TestNet();
 
+    void Snapshot();
+
 private:
     bool CheckDataShape(const BlobSptr &, int, int, int, int);
 
