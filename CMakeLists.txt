@@ -29,7 +29,4 @@ endif ()
 
 message(STATUS ${Boost_LIBRARIES})
 
-add_executable(study_caffe main.cpp)
-target_link_libraries(study_caffe caffe)
-
 add_subdirectory(dnn)
