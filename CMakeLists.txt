@@ -3,10 +3,18 @@ project(study_caffe)
 
 set(CMAKE_CXX_STANDARD 14)
 
-include_directories(/usr/local/cuda/include)
-link_directories(/usr/local/cuda/lib64)
+#include_directories(/usr/local/cuda/include)
+#link_directories(/usr/local/cuda/lib64)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -O3")
+
+add_definitions(-DCPU_ONLY)
+
+include_directories(/usr/local/opt/lapack/include)
+link_directories(/usr/local/opt/lapack/lib)
+
+include_directories(/usr/local/opt/openblas/include)
+link_directories(/usr/local/opt/openblas/lib)
 
 # Boost
 set(Boost_USE_STATIC_LIBS ON)  # only find static libs
@@ -24,4 +32,4 @@ message(STATUS ${Boost_LIBRARIES})
 add_executable(study_caffe main.cpp)
 target_link_libraries(study_caffe caffe)
 
-add_subdirectory(predict_sin)
+add_subdirectory(dnn)

@@ -18,14 +18,11 @@ int main(int argc, char *argv[]) {
 
     net->Initialize();
 
-    net->InitTrainData();
-
-    for (int i = 0; i < 500; ++i) {
-        net->UpdateNet();
-        if (i % 10 == 0) {
-            LOG(INFO) << net->Loss() << " " << i;
-        }
+    for (int j = 0; j < 10; ++j) {
+        net->TrainNet();
+        LOG(INFO) << "loss: " << net->Loss();
     }
+
 
     net->TestNet();
 

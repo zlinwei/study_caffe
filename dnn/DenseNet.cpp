@@ -5,6 +5,9 @@
 #include "DenseNet.hpp"
 #include <caffe/caffe.hpp>
 #include <glog/logging.h>
+#include <boost/random.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
+#include <boost/random/normal_distribution.hpp>
 
 void DenseNet::Initialize() {
     LOG(INFO) << "Initialize Dense Net";
@@ -12,10 +15,15 @@ void DenseNet::Initialize() {
     ::caffe::ReadSolverParamsFromTextFileOrDie(_solver_prototxt_filename, &solver_param);
 
     _solver.reset(::caffe::SolverRegistry<float>::CreateSolver(solver_param));
+
+    LOG(INFO) << _solver->type();
     _net = _solver->net();
 
     _data = _net->blob_by_name("data");
     assert(_data);
+
+    _label = _net->blob_by_name("label");
+    assert(_label);
 
     assert(CheckDataShape(_data, BATCH_SIZE, CHANNEL_SIZE, HEIGHT_SIZE, WIDTH_SIZE));
 
@@ -37,41 +45,32 @@ bool DenseNet::CheckDataShape(const DenseNet::BlobSptr &blob, int batch_size, in
            blob->width() == width;
 }
 
-void DenseNet::PutData(InputDataType data, OutputDataType label) {
-    _input_layer->Reset(data.begin(), label.begin(), BATCH_SIZE);
-}
-
-void DenseNet::UpdateNet() {
+void DenseNet::TrainNet() {
     InputDataType input{};
     OutputDataType label{};
     std::fill(input.begin(), input.end(), 0.0f);
+    std::fill(label.begin(), label.end(), 0.0f);
 
-    for (int i = 0; i < BATCH_SIZE; ++i) {
-        std::copy(_train_data.begin() + i + _current_iter * 10,
-                  _train_data.begin() + WIDTH_SIZE + i + _current_iter * 10,
-                  input.begin() + i * WIDTH_SIZE);
 
-        label[i] = _train_data[i + WIDTH_SIZE + _current_iter * 10];
+    boost::random::mt19937 rng(static_cast<const uint32_t &>(_current_iter + time(0)));
+    boost::random::uniform_real_distribution<float> uniform(0, 10);
+
+    boost::random::mt19937 rng1(static_cast<const uint32_t &>(_current_iter + time(0) + 1));
+    boost::random::normal_distribution<float> error(0, 0.01);
+
+    for (int j = 0; j < BATCH_SIZE; ++j) {
+        input[j] = uniform(rng);
+        label[j] = k * input[j] + b + error(rng1);
     }
 
-    if (_current_iter == 0)
-        for (int i = 0; i < BATCH_SIZE; ++i) {
-            LOG(INFO) << input[i * WIDTH_SIZE + WIDTH_SIZE] << " " << label[i];
-        }
+    _input_layer->Reset(input.begin(), label.begin(), BATCH_SIZE);
 
     _current_iter++;
 
-    this->PutData(input, label);
-    _net->ForwardBackward();
 
-
+    _solver->Step(100);
 }
 
-void DenseNet::InitTrainData() {
-    for (int i = 0; i < _train_data.size(); ++i) {
-        _train_data[i] = sin(float(i) / 10.0f);
-    }
-}
 
 float DenseNet::Loss() {
     return _loss->data_at(0, 0, 0, 0);
@@ -80,21 +79,22 @@ float DenseNet::Loss() {
 void DenseNet::TestNet() {
     InputDataType input{};
     OutputDataType output{};
-    std::fill(output.begin(), output.end(), 0.0f);
-    for (int i = 0; i < BATCH_SIZE; ++i) {
-        for (int j = 0; j < WIDTH_SIZE; ++j) {
-            input[i * WIDTH_SIZE + j] = sin(float(j + i) / 10.0f);
-        }
+    //y=k*x+b
+    boost::random::mt19937 rng(static_cast<const uint32_t &>(time(0)));
+    boost::random::uniform_real_distribution<float> uniform;
+    for (int j = 0; j < BATCH_SIZE; ++j) {
+        input[j] = uniform(rng);
+        output[j] = k * input[j] + b;
     }
 
+    _input_layer->Reset(input.begin(), output.begin(), BATCH_SIZE);
 
-    PutData(input, output);
-    _net->Forward(nullptr);
+    float loss;
+    _net->Forward(&loss);
 
-    LOG(INFO) << "result shape: " << _next_value->shape_string();
-    std::ofstream outfile("values.txt", std::ios::trunc);
+    std::ofstream outfile("test_result.txt", std::ios::trunc);
     for (int k = 0; k < BATCH_SIZE; ++k) {
-        outfile << input[k] << " " << _data->data_at(k, 0, 0, 0) << " " << _next_value->data_at(k, 0, 0, 0) << "\n";
+        outfile << _data->data_at(k, 0, 0, 0) << " " << output[k] << " " << _next_value->data_at(k, 0, 0, 0) << "\n";
     }
     outfile.close();
 }

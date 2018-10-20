@@ -12,10 +12,10 @@
 #include <caffe/caffe.hpp>
 #include <caffe/layers/memory_data_layer.hpp>
 
-constexpr auto BATCH_SIZE = 128;
+constexpr auto BATCH_SIZE = 256;
 constexpr auto CHANNEL_SIZE = 1;
 constexpr auto HEIGHT_SIZE = 1;
-constexpr auto WIDTH_SIZE = 100;
+constexpr auto WIDTH_SIZE = 1;
 
 constexpr auto OUTPUT_SIZE = 1;
 
@@ -37,11 +37,7 @@ public:
 
     using OutputDataType = std::array<float, OUTPUT_SIZE * BATCH_SIZE>;
 
-    void UpdateNet();
-
-    void PutData(InputDataType, OutputDataType);
-
-    void InitTrainData();
+    void TrainNet();
 
     float Loss();
 
@@ -59,6 +55,8 @@ private:
 
     BlobSptr _data;
 
+    BlobSptr _label;
+
     BlobSptr _next_value;
 
     BlobSptr _loss;
@@ -67,7 +65,9 @@ private:
 
     long long int _current_iter = 0;
 
-    std::array<float, WIDTH_SIZE * 100> _train_data;
+    float k = 2;
+
+    float b = 10;
 };
 
 
