@@ -8,13 +8,16 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -O3")
 
-add_definitions(-DCPU_ONLY)
+#add_definitions(-DCPU_ONLY)
 
 include_directories(/usr/local/opt/lapack/include)
 link_directories(/usr/local/opt/lapack/lib)
 
 include_directories(/usr/local/opt/openblas/include)
 link_directories(/usr/local/opt/openblas/lib)
+
+include_directories(/usr/local/cuda/include)
+link_directories(/usr/local/cuda/lib)
 
 # Boost
 set(Boost_USE_STATIC_LIBS ON)  # only find static libs
