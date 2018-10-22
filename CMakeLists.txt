@@ -33,6 +33,7 @@ endif ()
 message(STATUS ${Boost_LIBRARIES})
 
 add_subdirectory(dnn)
+add_subdirectory(cnn)
 
 
 enable_testing()
