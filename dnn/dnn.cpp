@@ -10,7 +10,7 @@
 #include "DenseNet.hpp"
 
 int main(int argc, char *argv[]) {
-    ::caffe::Caffe::set_mode(caffe::Caffe::CPU);
+    ::caffe::Caffe::set_mode(caffe::Caffe::GPU);
 
     LOG(INFO) << "start..";
 
