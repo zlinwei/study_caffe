@@ -33,9 +33,4 @@ add_subdirectory(dnn)
 
 
 enable_testing()
-find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
-
-add_executable(unit_tests unit_tests.cpp)
-target_link_libraries(unit_tests GTest::GTest GTest::Main)
-add_test(AllUnitTest unit_tests)
+add_subdirectory(tests)
