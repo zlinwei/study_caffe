@@ -1,9 +1,9 @@
 name: "IP_NET"
 layer {
-  name: "input_layer"
+  name: "input_data"
   type: "MemoryData"
   top: "data"
-  top: "label"
+  top: "silence1"
   memory_data_param {
     batch_size: 256
     channels: 1
@@ -11,6 +11,32 @@ layer {
     width: 1
   }
 }
+
+layer {
+  name: "input_label"
+  type: "MemoryData"
+  top: "label"
+  top: "silence2"
+  memory_data_param {
+    batch_size: 256
+    channels: 1
+    height: 1
+    width: 1
+  }
+}
+
+layer {
+    name: "silence_layer1"
+    type: "Silence"
+    bottom: "silence1"
+}
+
+layer{
+    name: "silence_layer2"
+    type: "Silence"
+    bottom: "silence2"
+}
+
 
 layer {
   name: "ip1_layer"

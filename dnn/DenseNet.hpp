@@ -65,6 +65,10 @@ private:
 
     MemoryDataLayerSptr _input_layer;
 
+    MemoryDataLayerSptr _input_label;
+
+    std::array<float, BATCH_SIZE> silence_data = {0.0f};
+
     long long int _current_iter = 0;
 
     float k = 2;

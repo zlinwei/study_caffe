@@ -10,6 +10,8 @@
 #include <boost/random/normal_distribution.hpp>
 
 void DenseNet::Initialize() {
+    std::fill(silence_data.begin(), silence_data.end(), 0.0f);
+
     LOG(INFO) << "Initialize Dense Net";
     ::caffe::SolverParameter solver_param;
     ::caffe::ReadSolverParamsFromTextFileOrDie(_solver_prototxt_filename, &solver_param);
@@ -30,8 +32,11 @@ void DenseNet::Initialize() {
     _next_value = _net->blob_by_name("next_value");
     assert(_next_value);
 
-    _input_layer = boost::dynamic_pointer_cast<::caffe::MemoryDataLayer<float>>(_net->layer_by_name("input_layer"));
+    _input_layer = boost::dynamic_pointer_cast<::caffe::MemoryDataLayer<float>>(_net->layer_by_name("input_data"));
     assert(_input_layer);
+
+    _input_label = boost::dynamic_pointer_cast<::caffe::MemoryDataLayer<float>>(_net->layer_by_name("input_label"));
+    assert(_input_label);
 
     _loss = _net->blob_by_name("loss");
     assert(_loss);
@@ -63,7 +68,8 @@ void DenseNet::TrainNet() {
         label[j] = k * input[j] + b + error(rng1);
     }
 
-    _input_layer->Reset(input.begin(), label.begin(), BATCH_SIZE);
+    _input_layer->Reset(input.begin(), silence_data.begin(), BATCH_SIZE);
+    _input_label->Reset(label.begin(), silence_data.begin(), BATCH_SIZE);
 
     _current_iter++;
 
@@ -78,6 +84,7 @@ float DenseNet::Loss() {
 void DenseNet::TestNet() {
     InputDataType input{};
     OutputDataType output{};
+
     //y=k*x+b
     boost::random::mt19937 rng(static_cast<const uint32_t &>(time(0)));
     boost::random::uniform_real_distribution<float> uniform;
@@ -86,8 +93,8 @@ void DenseNet::TestNet() {
         output[j] = k * input[j] + b;
     }
 
-    _input_layer->Reset(input.begin(), output.begin(), BATCH_SIZE);
-
+    _input_layer->Reset(input.begin(), silence_data.begin(), BATCH_SIZE);
+    _input_label->Reset(input.begin(), silence_data.begin(), BATCH_SIZE);
     float loss;
     _net->Forward(&loss);
 
