@@ -10,8 +10,11 @@
 #include "DenseNet.hpp"
 
 int main(int argc, char *argv[]) {
+#ifdef CPU_ONLY
+    ::caffe::Caffe::set_mode(::caffe::Caffe::CPU);
+#else
     ::caffe::Caffe::set_mode(caffe::Caffe::GPU);
-
+#endif
     LOG(INFO) << "start..";
 
     boost::shared_ptr<DenseNet> net = boost::make_shared<DenseNet>();

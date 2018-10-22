@@ -10,6 +10,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -O3")
 
 #add_definitions(-DCPU_ONLY)
 
+option(CPU_ONLY "" OFF)
+
+if (${CPU_ONLY})
+    add_definitions(-DCPU_ONLY)
+endif ()
+
 include_directories(/usr/local/opt/lapack/include)
 link_directories(/usr/local/opt/lapack/lib)
 
