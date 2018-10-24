@@ -1,9 +1,9 @@
 name: "CNN_NET"
 layer {
-  name: "input_layer"
+  name: "input_data"
   type: "MemoryData"
   top: "data"
-  top: "label"
+  top: "silence1"
   memory_data_param {
     batch_size: 16
     channels: 1
@@ -13,9 +13,46 @@ layer {
 }
 
 layer {
+  name: "input_label"
+  type: "MemoryData"
+  top: "label"
+  top: "silence2"
+  memory_data_param {
+    batch_size: 16
+    channels: 1
+    height: 1
+    width: 10a
+  }
+}
+
+layer {
+    name: "silence1"
+    type: "Silence"
+    bottom: "silence1"
+}
+
+layer{
+    name: "silence2"
+    type: "Silence"
+    bottom: "silence2"
+}
+
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "data"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 16
+    stride: 2
+  }
+}
+
+layer {
   name: "conv1"
   type: "Convolution"
-  bottom: "data"
+  bottom: "pool1"
   top: "conv1"
   param {
     lr_mult: 1
@@ -24,8 +61,8 @@ layer {
     lr_mult: 1
   }
   convolution_param {
-    num_output: 200
-    kernel_size: 64
+    num_output: 20
+    kernel_size: 32
     stride: 1
     weight_filler {
       type: "xavier"
@@ -43,7 +80,7 @@ layer {
   bottom: "conv1"
   top: "result"
   inner_product_param {
-    num_output: 1
+    num_output: 10
     weight_filler {
       type: "gaussian"
       std: 0.01

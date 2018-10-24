@@ -5,8 +5,10 @@
 #include "DeepNet.hpp"
 
 int main(){
+    ::caffe::Caffe::set_mode(::caffe::Caffe::GPU);
     auto *deepNet = new DeepNet<float>();
     deepNet->Init();
+    deepNet->InitLayer();
 
     return 0;
 }
