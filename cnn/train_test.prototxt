@@ -21,7 +21,7 @@ layer {
     batch_size: 16
     channels: 1
     height: 1
-    width: 10a
+    width: 10
   }
 }
 
