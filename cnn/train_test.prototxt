@@ -1,11 +1,11 @@
-name: "IP_NET"
+name: "CNN_NET"
 layer {
   name: "input_layer"
   type: "MemoryData"
   top: "data"
   top: "label"
   memory_data_param {
-    batch_size: 256
+    batch_size: 16
     channels: 1
     height: 1024
     width: 1024
