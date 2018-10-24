@@ -7,8 +7,8 @@ layer {
   memory_data_param {
     batch_size: 16
     channels: 1
-    height: 1024
-    width: 1024
+    height: 512
+    width: 512
   }
 }
 
@@ -44,7 +44,7 @@ layer {
   top: "pool1"
   pooling_param {
     pool: MAX
-    kernel_size: 16
+    kernel_size: 32
     stride: 2
   }
 }
