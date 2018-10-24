@@ -5,7 +5,13 @@
 #include "DeepNet.hpp"
 
 int main(){
-    ::caffe::Caffe::set_mode(::caffe::Caffe::GPU);
+#ifdef CPU_ONLY
+    ::caffe::Caffe::set_mode(::caffe::Caffe::CPU);
+#else
+    ::caffe::Caffe::set_mode(caffe::Caffe::GPU);
+#endif
+
+    LOG(INFO) << "start..";
     auto *deepNet = new DeepNet<float>();
     deepNet->Init();
     deepNet->InitLayer();
